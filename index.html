@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TEEAI — AI 隐私代理，PII 永不泄露</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #040810;
+      --bg2:      #080f1e;
+      --bg3:      #0c1528;
+      --cyan:     #00e5ff;
+      --cyan-dim: #00b8d4;
+      --amber:    #ffb800;
+      --red:      #ff4d6a;
+      --green:    #00ff88;
+      --white:    #f0f4ff;
+      --muted:    #5a6a8a;
+      --border:   rgba(0,229,255,0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.6;
+    }
+
+    /* ── GRID LINES ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(4,8,16,0.85);
+      backdrop-filter: blur(20px);
+    }
+
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 4px;
+      color: var(--cyan);
+      text-shadow: 0 0 30px rgba(0,229,255,0.5);
+    }
+    .logo span { color: var(--amber); }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+
+    .nav-cta {
+      background: var(--cyan);
+      color: #000;
+      border: none;
+      padding: 10px 24px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nav-cta:hover { background: var(--amber); transform: translateY(-1px); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .hero-glow2 {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,184,0,0.06) 0%, transparent 70%);
+      top: 30%;
+      right: 15%;
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,229,255,0.08);
+      border: 1px solid rgba(0,229,255,0.25);
+      padding: 6px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--cyan);
+      letter-spacing: 1px;
+      margin-bottom: 32px;
+    }
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(56px, 9vw, 110px);
+      line-height: 0.95;
+      letter-spacing: 3px;
+      margin-bottom: 28px;
+      position: relative;
+    }
+    h1 .line1 { display: block; color: var(--white); }
+    h1 .line2 { display: block; color: var(--cyan); text-shadow: 0 0 60px rgba(0,229,255,0.4); }
+    h1 .line3 { display: block; color: var(--amber); }
+
+    .hero-sub {
+      max-width: 620px;
+      color: #8899bb;
+      font-size: 18px;
+      font-weight: 300;
+      margin-bottom: 48px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 80px;
+    }
+
+    .btn-primary {
+      background: var(--cyan);
+      color: #000;
+      border: none;
+      padding: 16px 36px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s;
+      letter-spacing: 0.5px;
+    }
+    .btn-primary:hover { background: var(--amber); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(255,184,0,0.3); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 16px 36px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .btn-outline:hover { border-color: var(--cyan); color: var(--cyan); }
+
+    /* ── PII DEMO ── */
+    .pii-demo {
+      width: 100%;
+      max-width: 780px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .pii-demo-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,229,255,0.03);
+    }
+    .pii-demo-header span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+
+    .pii-rows {
+      padding: 28px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .pii-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .pii-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      min-width: 80px;
+      padding-top: 2px;
+      text-align: right;
+    }
+    .pii-content {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      line-height: 1.7;
+      flex: 1;
+    }
+    .pii-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .pii-highlight { color: var(--red); font-weight: 700; }
+    .pii-masked {
+      color: var(--cyan);
+      font-weight: 700;
+      position: relative;
+    }
+    .pii-restored { color: var(--green); font-weight: 700; }
+
+    .pii-step-label {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 8px;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .step-danger { background: rgba(255,77,106,0.12); color: var(--red); border: 1px solid rgba(255,77,106,0.3); }
+    .step-safe { background: rgba(0,229,255,0.08); color: var(--cyan); border: 1px solid rgba(0,229,255,0.25); }
+    .step-ok { background: rgba(0,255,136,0.08); color: var(--green); border: 1px solid rgba(0,255,136,0.25); }
+
+    .pii-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 4px 0;
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      position: relative;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--cyan);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(40px, 5vw, 64px);
+      letter-spacing: 2px;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+
+    .section-sub {
+      color: #8899bb;
+      font-size: 17px;
+      font-weight: 300;
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    /* ── HOW IT WORKS ── */
+    #how {
+      padding: 120px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .how-header { margin-bottom: 72px; }
+
+    .steps {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: start;
+      gap: 0;
+    }
+
+    .step {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 36px 32px;
+      position: relative;
+    }
+    .step:hover { border-color: rgba(0,229,255,0.3); }
+    .step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 64px;
+      color: rgba(0,229,255,0.08);
+      line-height: 1;
+      position: absolute;
+      top: 16px;
+      right: 20px;
+    }
+    .step-icon {
+      width: 44px; height: 44px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .step-icon-red { background: rgba(255,77,106,0.12); }
+    .step-icon-cyan { background: rgba(0,229,255,0.1); }
+    .step-icon-green { background: rgba(0,255,136,0.1); }
+
+    .step h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .step p { font-size: 14px; color: #6a7a99; line-height: 1.7; }
+
+    .step-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 8px;
+      color: rgba(0,229,255,0.3);
+      font-size: 28px;
+      align-self: center;
+    }
+
+    /* ── ONE LINE ── */
+    #oneline {
+      padding: 120px 0;
+      border-top: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+    }
+
+    .oneline-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .code-block {
+      background: #020509;
+      border: 1px solid var(--border);
+      padding: 32px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      line-height: 1.9;
+      position: relative;
+      overflow: hidden;
+    }
+    .code-block::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--amber));
+    }
+    .code-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .code-filename {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .code-lang {
+      font-size: 11px;
+      background: rgba(0,229,255,0.1);
+      color: var(--cyan);
+      padding: 2px 8px;
+      border-radius: 2px;
+    }
+
+    .c-comment { color: #3d5a80; }
+    .c-keyword { color: #ff79c6; }
+    .c-string { color: var(--amber); }
+    .c-fn { color: #50fa7b; }
+    .c-del {
+      color: var(--red);
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+    .c-add { color: var(--green); }
+    .c-highlight {
+      background: rgba(0,229,255,0.06);
+      border-left: 2px solid var(--cyan);
+      margin: 0 -32px;
+      padding: 0 32px 0 30px;
+      display: block;
+    }
+
+    /* ── FEATURES ── */
+    #features {
+      padding: 120px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .feat-header {
+      text-align: center;
+      margin-bottom: 72px;
+    }
+    .feat-header .section-sub { margin: 0 auto; }
+
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .feat-card {
+      background: var(--bg);
+      padding: 40px 36px;
+      transition: background 0.3s;
+    }
+    .feat-card:hover { background: var(--bg2); }
+
+    .feat-icon {
+      font-size: 28px;
+      margin-bottom: 20px;
+      display: block;
+    }
+    .feat-card h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      color: var(--white);
+    }
+    .feat-card p { font-size: 14px; color: #6a7a99; line-height: 1.8; }
+
+    .feat-tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      padding: 3px 10px;
+      background: rgba(0,229,255,0.08);
+      color: var(--cyan);
+      border: 1px solid rgba(0,229,255,0.2);
+      letter-spacing: 1px;
+      margin-top: 16px;
+    }
+    .feat-tag-amber {
+      background: rgba(255,184,0,0.08);
+      color: var(--amber);
+      border-color: rgba(255,184,0,0.2);
+    }
+
+    /* ── COMPARISON ── */
+    #compare {
+      padding: 120px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .compare-header { margin-bottom: 56px; }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .compare-table th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      text-align: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+    }
+    .compare-table th:first-child { text-align: left; }
+    .compare-table th.teeai-col {
+      color: var(--cyan);
+      background: rgba(0,229,255,0.04);
+      border-left: 1px solid rgba(0,229,255,0.2);
+      border-right: 1px solid rgba(0,229,255,0.2);
+    }
+    .compare-table td {
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      text-align: center;
+      color: var(--muted);
+    }
+    .compare-table td:first-child { text-align: left; color: var(--white); font-weight: 500; }
+    .compare-table td.teeai-col {
+      background: rgba(0,229,255,0.03);
+      border-left: 1px solid rgba(0,229,255,0.15);
+      border-right: 1px solid rgba(0,229,255,0.15);
+    }
+    .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .compare-table tr:hover td.teeai-col { background: rgba(0,229,255,0.06); }
+
+    .cmp-yes { color: var(--green); font-weight: 700; }
+    .cmp-no { color: #3a4a66; }
+    .cmp-partial { color: var(--amber); }
+    .cmp-unique {
+      color: var(--cyan);
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+
+    .compare-section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: rgba(0,229,255,0.4);
+      padding: 20px 20px 8px;
+      text-align: left;
+      background: rgba(0,229,255,0.02);
+    }
+
+    /* ── ATTESTATION SECTION ── */
+    #attest {
+      padding: 120px 0;
+      border-top: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+    }
+
+    .attest-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .chain {
+      background: #020509;
+      border: 1px solid var(--border);
+      padding: 32px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      position: relative;
+    }
+    .chain::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--amber), var(--cyan));
+    }
+
+    .chain-node {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .chain-node:last-child { border-bottom: none; }
+    .chain-node-icon {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .chain-node-body { flex: 1; }
+    .chain-node-title {
+      color: var(--white);
+      font-weight: 700;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+    .chain-node-desc { color: var(--muted); font-size: 11px; line-height: 1.6; }
+    .chain-connector {
+      width: 36px;
+      display: flex;
+      justify-content: center;
+      color: rgba(0,229,255,0.3);
+      font-size: 20px;
+      padding: 4px 0;
+    }
+
+    /* ── CTA ── */
+    #cta {
+      padding: 140px 24px;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    #cta::before {
+      content: '';
+      position: absolute;
+      width: 800px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #cta h2 { margin-bottom: 20px; }
+    #cta p {
+      color: #6a7a99;
+      font-size: 18px;
+      margin-bottom: 48px;
+      font-weight: 300;
+    }
+
+    .cta-form {
+      display: flex;
+      gap: 0;
+      justify-content: center;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+    .cta-form input {
+      flex: 1;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-right: none;
+      color: var(--white);
+      padding: 16px 20px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      outline: none;
+    }
+    .cta-form input::placeholder { color: var(--muted); }
+    .cta-form input:focus { border-color: rgba(0,229,255,0.4); }
+    .cta-form button {
+      background: var(--cyan);
+      color: #000;
+      border: none;
+      padding: 16px 28px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .cta-form button:hover { background: var(--amber); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    footer .logo { font-size: 20px; }
+    footer p { color: var(--muted); font-size: 13px; }
+
+    /* ── SCROLL ANIMATIONS ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ── TYPEWRITER ANIMATION ── */
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--cyan);
+      animation: blink 1s infinite;
+      vertical-align: text-bottom;
+      margin-left: 2px;
+    }
+
+    /* ── FLOATING PARTICLES ── */
+    .particles {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: var(--cyan);
+      animation: float-up linear infinite;
+      opacity: 0;
+    }
+    @keyframes float-up {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.6; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.2); border-radius: 3px; }
+
+    @media (max-width: 900px) {
+      nav { padding: 16px 20px; }
+      .nav-links { display: none; }
+      .steps { grid-template-columns: 1fr; }
+      .step-arrow { transform: rotate(90deg); }
+      .oneline-grid, .attest-grid { grid-template-columns: 1fr; gap: 40px; }
+      .feat-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 16px; text-align: center; }
+      .cta-form { flex-direction: column; }
+      .cta-form input { border-right: 1px solid var(--border); border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">TEE<span>AI</span></div>
+    <ul class="nav-links">
+      <li><a href="#how">原理</a></li>
+      <li><a href="#features">功能</a></li>
+      <li><a href="#compare">对比</a></li>
+      <li><a href="#attest">行为存证</a></li>
+    </ul>
+    <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">申请内测 →</button>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="particles" id="particles"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-glow2"></div>
+
+    <div class="badge">
+      <div class="badge-dot"></div>
+      INTEL TDX · TEE 硬件隔离 · 零信任代理
+    </div>
+
+    <h1>
+      <span class="line1">AI 调用</span>
+      <span class="line2">PII 永不泄露</span>
+      <span class="line3">换一行代码</span>
+    </h1>
+
+    <p class="hero-sub">
+      OpenAI 兼容代理。敏感信息在转发前自动脱敏，响应后自动还原。
+      外部 LLM 只看到 <code style="color:var(--cyan);font-family:JetBrains Mono,monospace">[PERSON_1]</code>，
+      从未接触真实数据。运行在 Intel TDX 可信执行环境，连平台自身也无法访问你的数据。
+    </p>
+
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">申请内测</button>
+      <button class="btn-outline" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">查看原理 ↓</button>
+    </div>
+
+    <!-- PII DEMO -->
+    <div class="pii-demo reveal">
+      <div class="pii-demo-header">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <span>pii-transform.log</span>
+        <span style="margin-left:auto;color:var(--green);font-size:11px">● LIVE</span>
+      </div>
+      <div class="pii-rows">
+        <div class="pii-row">
+          <div class="pii-label">USER</div>
+          <div>
+            <span class="pii-step-label step-danger">⚠ 含 PII</span>
+            <div class="pii-content" id="input-text">
+              帮我分析<span class="pii-highlight">张三</span>（身份证 <span class="pii-highlight">440305199001011234</span>）的医疗报告，联系手机 <span class="pii-highlight">13812345678</span>
+            </div>
+          </div>
+        </div>
+        <hr class="pii-divider">
+        <div class="pii-row">
+          <div class="pii-label">→ LLM</div>
+          <div>
+            <span class="pii-step-label step-safe">✓ 已脱敏</span>
+            <div class="pii-content">
+              帮我分析<span class="pii-masked">[PERSON_1]</span>（身份证 <span class="pii-masked">[ID_CARD_1]</span>）的医疗报告，联系手机 <span class="pii-masked">[PHONE_1]</span>
+            </div>
+          </div>
+        </div>
+        <hr class="pii-divider">
+        <div class="pii-row">
+          <div class="pii-label">USER ←</div>
+          <div>
+            <span class="pii-step-label step-ok">✓ 已还原</span>
+            <div class="pii-content">
+              <span class="pii-restored">张三</span>的报告显示血糖偏高，建议联系 <span class="pii-restored">13812345678</span> 预约复查
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="container">
+      <div class="how-header reveal">
+        <div class="section-tag">// 工作原理</div>
+        <h2>三步完成隐私保护</h2>
+        <p class="section-sub">在 TEE 可信执行环境内全程处理，明文不出 TEE 内存边界</p>
+      </div>
+      <div class="steps">
+        <div class="step reveal reveal-delay-1">
+          <div class="step-num">01</div>
+          <div class="step-icon step-icon-red">📤</div>
+          <h3>应用发送请求</h3>
+          <p>你的应用正常调用 API，含有姓名、身份证、手机号等真实 PII。请求进入 TEE 受保护内存，不落盘。</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step reveal reveal-delay-2">
+          <div class="step-num">02</div>
+          <div class="step-icon step-icon-cyan">🔒</div>
+          <h3>TEE 内自动脱敏</h3>
+          <p>NER + 正则混合引擎检测 PII，替换为 <code style="color:var(--cyan)">[PERSON_1]</code> 占位符。映射表仅存内存，请求后即销毁。</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step reveal reveal-delay-3">
+          <div class="step-num">03</div>
+          <div class="step-icon step-icon-green">✅</div>
+          <h3>响应自动还原</h3>
+          <p>LLM 响应回到 TEE 后，占位符被还原为真实值，再返回给你的应用。全程 < 200ms 额外延迟。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ONE LINE -->
+  <section id="oneline">
+    <div class="container">
+      <div class="oneline-grid">
+        <div class="reveal">
+          <div class="section-tag">// 接入方式</div>
+          <h2>一行代码<br>完成接入</h2>
+          <p class="section-sub" style="margin-bottom:32px">
+            完全兼容 OpenAI SDK。只需修改 <code style="color:var(--cyan);font-family:JetBrains Mono,monospace">base_url</code>，
+            无需改动任何业务逻辑，PII 保护立即生效。
+          </p>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;gap:12px;color:#6a7a99;font-size:14px">
+              <span style="color:var(--green);font-size:18px">✓</span> 支持 Python / TypeScript / Go / curl
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;color:#6a7a99;font-size:14px">
+              <span style="color:var(--green);font-size:18px">✓</span> Streaming SSE 完整支持
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;color:#6a7a99;font-size:14px">
+              <span style="color:var(--green);font-size:18px">✓</span> 多模型路由 · 自动 Fallback
+            </div>
+          </div>
+        </div>
+        <div class="code-block reveal reveal-delay-2">
+          <div class="code-header">
+            <div class="dot dot-r"></div>
+            <div class="dot dot-y"></div>
+            <div class="dot dot-g"></div>
+            <span class="code-filename">main.py</span>
+            <span class="code-lang">Python</span>
+          </div>
+<pre><span class="c-keyword">from</span> openai <span class="c-keyword">import</span> OpenAI
+
+<span class="c-comment"># 改动前</span>
+<span class="c-del">client = OpenAI(api_key="sk-...")</span>
+
+<span class="c-comment"># 改动后（仅此一行）</span>
+<span class="c-highlight">client = OpenAI(
+    api_key=<span class="c-string">"tee-your-key"</span>,
+    base_url=<span class="c-string">"https://api.teeai.dev/v1"</span>
+)</span>
+
+<span class="c-comment"># 业务代码无需任何改动</span>
+response = client.chat.completions.<span class="c-fn">create</span>(
+    model=<span class="c-string">"gpt-4o"</span>,
+    messages=[{<span class="c-string">"role"</span>: <span class="c-string">"user"</span>,
+               <span class="c-string">"content"</span>: user_message}]
+)
+<span class="c-comment"># PII 已自动脱敏，响应已自动还原 ✓</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="container">
+      <div class="feat-header reveal">
+        <div class="section-tag">// 核心能力</div>
+        <h2>不只是代理</h2>
+        <p class="section-sub">完整的企业级隐私保护栈，从传输到存证</p>
+      </div>
+      <div class="feat-grid">
+        <div class="feat-card reveal">
+          <span class="feat-icon">🔐</span>
+          <h3>PII 自动脱敏还原</h3>
+          <p>中文 NER + 正则混合引擎，支持姓名、身份证、手机、银行卡、地址等 20+ 类型。检测率 > 90%，延迟 < 200ms。</p>
+          <span class="feat-tag">独有能力</span>
+        </div>
+        <div class="feat-card reveal reveal-delay-1">
+          <span class="feat-icon">🏛️</span>
+          <h3>Intel TDX 硬件隔离</h3>
+          <p>运行在 Intel Trust Domain Extensions 可信执行环境。连平台运营商也无法访问内存中的明文数据，硬件级零信任。</p>
+          <span class="feat-tag">独有能力</span>
+        </div>
+        <div class="feat-card reveal reveal-delay-2">
+          <span class="feat-icon">🔗</span>
+          <h3>行为存证 · 随时验证</h3>
+          <p>基于 ECDSA 签名的三层信任链。每轮对话生成签名，用户可随时取出历史记录，离线验证对话真实性，无需信任 TEEAI。</p>
+          <span class="feat-tag feat-tag-amber">可验证</span>
+        </div>
+        <div class="feat-card reveal">
+          <span class="feat-icon">🌐</span>
+          <h3>多模型路由</h3>
+          <p>一个 API Key 接入 DeepSeek、Qwen、ChatGPT。主模型限速时自动 Fallback，业务不中断，无需管理多套密钥。</p>
+          <span class="feat-tag feat-tag-amber">企业级</span>
+        </div>
+        <div class="feat-card reveal reveal-delay-1">
+          <span class="feat-icon">🚫</span>
+          <h3>明文不落盘</h3>
+          <p>平台只记录 token 数、延迟、模型等元数据，从不存储请求内容。无 Prompt 回放，无对话日志。隐私承诺写入代码。</p>
+          <span class="feat-tag">零日志</span>
+        </div>
+        <div class="feat-card reveal reveal-delay-2">
+          <span class="feat-icon">🔑</span>
+          <h3>端到端加密</h3>
+          <p>可选 E2EE 模式（ECDH X25519 + AES-256-GCM），连 TEEAI 网关也看不到你的消息，真正的端到端零信任传输。</p>
+          <span class="feat-tag">可选增强</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON -->
+  <section id="compare">
+    <div class="container">
+      <div class="compare-header reveal">
+        <div class="section-tag">// 竞品对比</div>
+        <h2>别人没有的<br>才是护城河</h2>
+      </div>
+      <div class="reveal">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>功能</th>
+              <th>OpenRouter</th>
+              <th>Portkey</th>
+              <th>LiteLLM</th>
+              <th>NEAR AI</th>
+              <th class="teeai-col">TEEAI</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="6" class="compare-section-label">// 隐私与安全</td></tr>
+            <tr>
+              <td>PII 自动脱敏 + 还原</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-no">✕</td>
+              <td class="teeai-col cmp-unique">★ 独有</td>
+            </tr>
+            <tr>
+              <td>隐私策略可配置</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-no">✕</td>
+              <td class="teeai-col cmp-unique">★ 独有</td>
+            </tr>
+            <tr>
+              <td>明文不落盘</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-yes">✓</td>
+              <td class="teeai-col cmp-yes">✓</td>
+            </tr>
+            <tr>
+              <td>TEE 硬件隔离</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-yes">✓</td>
+              <td class="teeai-col cmp-yes">✓</td>
+            </tr>
+            <tr>
+              <td>E2EE 端到端加密</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-partial">部分</td>
+              <td class="teeai-col cmp-yes">✓</td>
+            </tr>
+            <tr>
+              <td>行为可验证存证</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-partial">节点级</td>
+              <td class="teeai-col cmp-unique">★ 每轮签名</td>
+            </tr>
+
+            <tr><td colspan="6" class="compare-section-label">// 接入 & 路由</td></tr>
+            <tr>
+              <td>OpenAI 兼容 API</td>
+              <td class="cmp-yes">✓</td>
+              <td class="cmp-yes">✓</td>
+              <td class="cmp-yes">✓</td>
+              <td class="cmp-yes">✓</td>
+              <td class="teeai-col cmp-yes">✓</td>
+            </tr>
+            <tr>
+              <td>多模型路由</td>
+              <td class="cmp-yes">✓</td>
+              <td class="cmp-yes">✓</td>
+              <td class="cmp-yes">✓</td>
+              <td class="cmp-partial">部分</td>
+              <td class="teeai-col cmp-yes">✓</td>
+            </tr>
+            <tr>
+              <td>自动 Fallback</td>
+              <td class="cmp-yes">✓</td>
+              <td class="cmp-yes">✓</td>
+              <td class="cmp-yes">✓</td>
+              <td class="cmp-no">✕</td>
+              <td class="teeai-col cmp-yes">✓</td>
+            </tr>
+
+            <tr><td colspan="6" class="compare-section-label">// 可观测性</td></tr>
+            <tr>
+              <td>请求内容日志</td>
+              <td class="cmp-no">✕</td>
+              <td class="cmp-yes" style="color:var(--red)">✓ 可见</td>
+              <td class="cmp-yes" style="color:var(--red)">✓ 可见</td>
+              <td class="cmp-no">✕</td>
+              <td class="teeai-col" style="color:var(--cyan);font-family:JetBrains Mono,monospace;font-size:12px">刻意不做</td>
+            </tr>
+            <tr>
+              <td>元数据 & 成本追踪</td>
+              <td class="cmp-yes">✓</td>
+              <td class="cmp-yes">✓</td>
+              <td class="cmp-yes">✓</td>
+              <td class="cmp-partial">部分</td>
+              <td class="teeai-col cmp-yes">✓</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATTESTATION -->
+  <section id="attest">
+    <div class="container">
+      <div class="attest-grid">
+        <div class="reveal">
+          <div class="section-tag">// 行为存证</div>
+          <h2>每一句对话<br>皆可验证</h2>
+          <p class="section-sub" style="margin-bottom:32px">
+            三层信任链设计，从 Intel TDX 硬件信任根，到每轮对话的 ECDSA 签名。
+            用户随时取出历史对话 + 签名，离线验证，无需信任 TEEAI。
+          </p>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:#6a7a99">
+              <span style="color:var(--amber)">⬡</span> 节点启动时生成 TDX Quote（一次性，Intel DCAP 验证）
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:#6a7a99">
+              <span style="color:var(--cyan)">⬡</span> 每次 Session 生成临时密钥对，锚定到节点度量值
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:#6a7a99">
+              <span style="color:var(--green)">⬡</span> 每轮对话 ECDSA 签名，含真实模型端点 + TLS 证书指纹
+            </div>
+          </div>
+        </div>
+        <div class="chain reveal reveal-delay-2">
+          <div style="font-family:JetBrains Mono,monospace;font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:20px">// TRUST CHAIN</div>
+          <div class="chain-node">
+            <div class="chain-node-icon" style="border-color:rgba(255,184,0,0.3);color:var(--amber)">🔷</div>
+            <div class="chain-node-body">
+              <div class="chain-node-title" style="color:var(--amber)">Layer 1 — Intel TDX Quote</div>
+              <div class="chain-node-desc">节点启动时生成，含 MRTD/RTMR 代码度量值<br><span style="color:var(--amber);opacity:0.7">ReportData = SHA256(node_pubkey ‖ boot_timestamp)</span></div>
+            </div>
+          </div>
+          <div class="chain-connector">↓</div>
+          <div class="chain-node">
+            <div class="chain-node-icon" style="border-color:rgba(0,229,255,0.3);color:var(--cyan)">🔑</div>
+            <div class="chain-node-body">
+              <div class="chain-node-title">Layer 2 — Session 证书</div>
+              <div class="chain-node-desc">每次会话生成临时 ECDSA 密钥对，锚定 node_measurement<br><span style="color:var(--cyan);opacity:0.7">session_hash = SHA256(node_meas ‖ session_id ‖ pubkey)</span></div>
+            </div>
+          </div>
+          <div class="chain-connector">↓</div>
+          <div class="chain-node">
+            <div class="chain-node-icon" style="border-color:rgba(0,255,136,0.3);color:var(--green)">✍️</div>
+            <div class="chain-node-body">
+              <div class="chain-node-title" style="color:var(--green)">Layer 3 — Turn 签名</div>
+              <div class="chain-node-desc">每轮对话 ECDSA 签名，含请求/响应哈希 + 模型端点<br><span style="color:var(--green);opacity:0.7">sign(session_hash ‖ H(req) ‖ H(resp) ‖ turn_index)</span></div>
+            </div>
+          </div>
+          <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)">
+            用户离线验证：保存对话记录 + 签名 Header → 随时可验
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta">
+    <div class="container">
+      <div class="section-tag" style="justify-content:center;display:flex">// 加入内测</div>
+      <h2>先人一步<br><span style="color:var(--cyan)">保护你的数据</span></h2>
+      <p>现在申请内测资格，首批用户免费使用核心功能</p>
+      <form class="cta-form" onsubmit="handleSubmit(event)">
+        <input type="email" placeholder="your@company.com" required id="email-input" />
+        <button type="submit">申请内测 →</button>
+      </form>
+      <p id="submit-msg" style="margin-top:16px;font-size:14px;color:var(--green);display:none">✓ 已收到，我们会尽快联系你</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="logo">TEE<span>AI</span></div>
+    <p>© 2026 TEEAI · Intel TDX 隐私代理 · 数据主权归你所有</p>
+    <p style="color:var(--muted);font-size:12px">Built with ❤️ inside TEE</p>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Particles
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 20; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDuration = (8 + Math.random() * 12) + 's';
+      p.style.animationDelay = (Math.random() * 15) + 's';
+      p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';
+      p.style.opacity = Math.random() * 0.5;
+      container.appendChild(p);
+    }
+
+    // Hero reveal on load
+    setTimeout(() => {
+      document.querySelectorAll('#hero .reveal').forEach(el => el.classList.add('visible'));
+    }, 200);
+
+    // Form
+    function handleSubmit(e) {
+      e.preventDefault();
+      document.getElementById('submit-msg').style.display = 'block';
+      document.getElementById('email-input').value = '';
+    }
+
+    // Animated PII demo - cycle through examples
+    const examples = [
+      {
+        input: '帮我分析<em class="pii-highlight">张三</em>（身份证 <em class="pii-highlight">440305199001011234</em>）的医疗报告，联系手机 <em class="pii-highlight">13812345678</em>',
+        masked: '帮我分析<em class="pii-masked">[PERSON_1]</em>（身份证 <em class="pii-masked">[ID_CARD_1]</em>）的医疗报告，联系手机 <em class="pii-masked">[PHONE_1]</em>',
+        restored: '<em class="pii-restored">张三</em>的报告显示血糖偏高，建议联系 <em class="pii-restored">13812345678</em> 预约复查'
+      },
+      {
+        input: '客户<em class="pii-highlight">李四</em>银行卡 <em class="pii-highlight">6225880067324999</em> 近期有大额转账，邮箱 <em class="pii-highlight">lisi@example.com</em>',
+        masked: '客户<em class="pii-masked">[PERSON_1]</em>银行卡 <em class="pii-masked">[BANK_CARD_1]</em> 近期有大额转账，邮箱 <em class="pii-masked">[EMAIL_1]</em>',
+        restored: '<em class="pii-restored">李四</em>的账户风险评级为中等，建议人工复核 <em class="pii-restored">6225880067324999</em>'
+      },
+      {
+        input: '请起草一份合同，甲方<em class="pii-highlight">王五</em>，住址<em class="pii-highlight">北京市朝阳区某某路88号</em>，联系 <em class="pii-highlight">010-88888888</em>',
+        masked: '请起草一份合同，甲方<em class="pii-masked">[PERSON_1]</em>，住址<em class="pii-masked">[ADDRESS_1]</em>，联系 <em class="pii-masked">[PHONE_1]</em>',
+        restored: '合同已生成，甲方 <em class="pii-restored">王五</em>，地址 <em class="pii-restored">北京市朝阳区某某路88号</em>'
+      }
+    ];
+
+    let idx = 0;
+    function cyclePII() {
+      const ex = examples[idx % examples.length];
+      idx++;
+      const rows = document.querySelectorAll('.pii-content');
+      if (rows.length >= 3) {
+        rows[0].style.opacity = 0;
+        rows[1].style.opacity = 0;
+        rows[2].style.opacity = 0;
+        setTimeout(() => {
+          rows[0].innerHTML = ex.input;
+          rows[1].innerHTML = ex.masked;
+          rows[2].innerHTML = ex.restored;
+          rows[0].style.transition = 'opacity 0.5s';
+          rows[1].style.transition = 'opacity 0.5s';
+          rows[2].style.transition = 'opacity 0.5s';
+          rows[0].style.opacity = 1;
+          setTimeout(() => { rows[1].style.opacity = 1; }, 300);
+          setTimeout(() => { rows[2].style.opacity = 1; }, 600);
+        }, 400);
+      }
+    }
+    setInterval(cyclePII, 4000);
+  </script>
+</body>
+</html>
