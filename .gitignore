@@ -1,0 +1,5 @@
+.vercel
+.DS_Store
+*.fig
+dist
+node_modules

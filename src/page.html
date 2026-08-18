@@ -1,0 +1,265 @@
+<main class="page" id="top">
+  <section class="hero" aria-labelledby="hero-title">
+    <picture class="hero-picture" aria-hidden="true">
+      <source data-theme-source="light" media="not all" srcset="/assets/figma-light-hero.png">
+      <img class="hero-art" src="/assets/figma-v3-hero.png" alt="">
+    </picture>
+
+    <header class="site-header shell">
+      <a class="brand" href="#top" aria-label="ZeroClave 首页">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-word" aria-hidden="true"></span>
+      </a>
+
+      <nav class="header-actions" aria-label="顶部导航">
+        <a class="header-link header-link-doc" href="#demo">DOC</a>
+        <a class="header-link" href="#contact">登录</a>
+        <a class="header-link header-link-primary" href="#contact">极速接入</a>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换显示主题">
+          <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">☀</span>
+          <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">☾</span>
+          <span class="sr-only" data-theme-toggle-label>夜间</span>
+        </button>
+      </nav>
+    </header>
+
+    <div class="hero-copy shell">
+      <h1 class="hero-title" id="hero-title">
+        <img src="/assets/figma-v3-title-hero.svg" alt="">
+        <span class="sr-only">通往可信人工智能的安全网关</span>
+      </h1>
+      <p class="hero-description">提供企业级可信 AI 安全计算基础设施，保障大模型调用的全过程隐私安全。</p>
+      <div class="hero-buttons">
+        <a class="button button-primary" href="#contact">极速接入</a>
+        <a class="button button-outline" href="#about">了解详情</a>
+      </div>
+    </div>
+
+    <div class="capability-band" aria-label="产品能力概览">
+      <img class="capability-band__texture" src="/assets/figma-v3-keyword-texture.png" alt="">
+      <div class="capability-band__inner">
+        <div class="capability-item">
+          <strong>隐私合规</strong>
+          <span>满足《个保法》、等保三级、GDPR等监管要求</span>
+        </div>
+        <div class="capability-item">
+          <strong>灵活接入</strong>
+          <span>支持API、SDK、Sidecar 代理等多种接入方式</span>
+        </div>
+        <div class="capability-item">
+          <strong>高精度，低延时</strong>
+          <span>识别准确率&gt;99%，&lt;200ms 高速响应</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about section-shell" id="about" aria-labelledby="about-title">
+    <h2 class="image-heading image-heading-about" id="about-title">
+      <img src="/assets/figma-v3-title-about.svg" alt="">
+      <span class="sr-only">关于 ZeroClave</span>
+    </h2>
+    <p>ZeroClave 通过硬件级隔离、隐私防火墙和密码学可信验证技术，以 SAAS 形式无缝部署在企业和云端大模型之间，解决大模型调用全流程数据泄露和隐私安全问题，通过技术架构原生满足国内外主流合规需求，实现企业级 AI 安全可信应用。</p>
+  </section>
+
+  <section class="core section-shell" id="features" aria-labelledby="core-title">
+    <div class="section-heading core-heading">
+      <h2 class="image-heading" id="core-title">
+        <img src="/assets/figma-v3-title-core.svg" alt="">
+        <span class="sr-only">核心功能</span>
+      </h2>
+    </div>
+
+    <nav class="core-tabs" aria-label="核心功能导航">
+      <a class="core-tab active" data-core-tab href="#trusted-compute">硬件级可信处理</a>
+      <a class="core-tab" data-core-tab href="#privacy-firewall">Token 级隐私防火墙</a>
+      <a class="core-tab" data-core-tab href="#remote-attestation">远程证明可复验</a>
+      <a class="core-tab" data-core-tab href="#session-audit">会话保护与审计</a>
+    </nav>
+
+    <article class="core-row core-row-one" id="trusted-compute">
+      <div class="core-media">
+        <img src="/assets/figma-v3-core-hardware.png" alt="硬件级可信处理">
+      </div>
+      <div class="core-copy">
+        <img class="core-icon" src="/assets/figma-icon-hardware.png" alt="">
+        <h3>硬件级可信处理</h3>
+        <p>ZeroClave 的核心运行在可信执行环境内，用户的提示词、模态数据和历史记忆仅在可信执行环境中解密处理，任何权限拥有者均无法窥探明文数据。</p>
+      </div>
+    </article>
+
+    <article class="core-row core-row-two" id="privacy-firewall">
+      <div class="core-media">
+        <img src="/assets/figma-v3-core-privacy.png" alt="Token 级隐私防火墙">
+      </div>
+      <div class="core-copy">
+        <img class="core-icon" src="/assets/figma-icon-privacy.png" alt="">
+        <h3>Token 级隐私防火墙</h3>
+        <p>依据重要性及隐私性评估结果，采用差分隐私、格式保留加密及安全过滤技术，实现数据脱敏和语义完整度保留。</p>
+      </div>
+    </article>
+
+    <article class="core-row core-row-three" id="remote-attestation">
+      <div class="core-media">
+        <img src="/assets/figma-v3-core-proof.png" alt="远程证明可复验">
+      </div>
+      <div class="core-copy">
+        <img class="core-icon" src="/assets/figma-icon-proof.png" alt="">
+        <h3>远程证明可复验</h3>
+        <p>遵循 IETF RATS 协议，客户可独立验证运行环境和工作负载，确保使用时运行环境安全、代码未被篡改、模型未被降智。</p>
+      </div>
+    </article>
+
+    <article class="core-row core-row-four" id="session-audit">
+      <div class="core-media">
+        <img src="/assets/figma-v3-core-session.png" alt="会话保护与审计">
+      </div>
+      <div class="core-copy">
+        <img class="core-icon" src="/assets/figma-icon-session.svg" alt="">
+        <h3>会话保护与审计</h3>
+        <p>以 ECDH-P256 协商会话密钥，并为每次请求独立派生 AES-256-GCM 密钥；配合不可篡改的调用审计链，支持追溯可信状态、策略版本和处理结果。</p>
+      </div>
+    </article>
+  </section>
+
+  <section class="solutions section-shell" id="solutions" aria-labelledby="solutions-title">
+    <div class="section-heading solutions-heading">
+      <h2 class="image-heading" id="solutions-title">
+        <img src="/assets/figma-v3-title-solutions.svg" alt="">
+        <span class="sr-only">解决方案</span>
+      </h2>
+      <p>在法律、金融、政务、医疗等高敏感行业场景中均提供配套解决方案</p>
+    </div>
+
+    <div class="solution-grid">
+      <article class="solution-card">
+        <img src="/assets/figma-v3-solution-law.png" alt="法律场景">
+        <div class="solution-overlay"></div>
+        <div class="solution-copy">
+          <h3>法律场景</h3>
+          <p>AI 能够极大减轻文书工作的压力，但又同时关系律所的核心知识资产……</p>
+        </div>
+        <button class="solution-more" type="button" data-solution="law">Learn more</button>
+      </article>
+
+      <article class="solution-card">
+        <img src="/assets/figma-v3-solution-government.png" alt="政务场景">
+        <div class="solution-overlay"></div>
+        <div class="solution-copy">
+          <h3>政务场景</h3>
+          <p>政府通过接入 AI 优化民生服务效能，但政务数据包含大量公民隐私……</p>
+        </div>
+        <button class="solution-more" type="button" data-solution="government">Learn more</button>
+      </article>
+
+      <article class="solution-card">
+        <img src="/assets/figma-v3-solution-medical.png" alt="医疗场景">
+        <div class="solution-overlay"></div>
+        <div class="solution-copy">
+          <h3>医疗场景</h3>
+          <p>AI 问诊，既需要完全了解患者的病情变化，又不希望它知道患者是谁……</p>
+        </div>
+        <button class="solution-more" type="button" data-solution="medical">Learn more</button>
+      </article>
+
+      <article class="solution-card">
+        <img src="/assets/figma-v3-solution-finance.png" alt="金融场景">
+        <div class="solution-overlay"></div>
+        <div class="solution-copy">
+          <h3>金融场景</h3>
+          <p>理财 Agent 正在为用户提供咨询服务，金融数据也随之涌入云端……</p>
+        </div>
+        <button class="solution-more" type="button" data-solution="finance">Learn more</button>
+      </article>
+    </div>
+  </section>
+
+  <section class="models" id="models" aria-labelledby="models-title">
+    <div class="model-heading">
+      <h2 id="models-title">
+        <span class="model-title-desktop">One Key | All Models | Always Verified</span>
+        <span class="model-title-mobile">One Key<br>All Models<br>Always Verified</span>
+      </h2>
+      <p>获取您的专属 Key，直达 100+ 国产主流大模型。</p>
+    </div>
+
+    <div class="model-cloud" aria-label="支持的模型">
+      <span class="model-tag model-tag-large" style="--x: 599px; --y: 266px; --w: 180px;">GLM-5.2</span>
+      <span class="model-tag model-tag-large" style="--x: 438px; --y: 172px; --w: 250px;">Deepseek-v4</span>
+      <span class="model-tag model-tag-large" style="--x: 293px; --y: 80px; --w: 250px;">Qwen3.8-Max</span>
+      <span class="model-tag" style="--x: 534px; --y: 12px; --w: 159px;">ERNIE 5.1</span>
+      <span class="model-tag" style="--x: 358px; --y: 6px; --w: 159px;">SenseNova</span>
+      <span class="model-tag" style="--x: 227px; --y: 170px; --w: 176px;">Baichuan3</span>
+      <span class="model-tag" style="--x: 710px; --y: 20px; --w: 176px;">LongCat-2.0</span>
+      <span class="model-tag" style="--x: 904px; --y: 0px; --w: 176px;">Pangu-2.0</span>
+      <span class="model-tag" style="--x: 584px; --y: 88px; --w: 180px;">Kimi-k3</span>
+      <span class="model-tag" style="--x: 966px; --y: 72px; --w: 180px;">DeepSeek-R1</span>
+      <span class="model-tag" style="--x: 161px; --y: 254px; --w: 180px;">MiniMax-M3</span>
+      <span class="model-tag" style="--x: 50px; --y: 21px; --w: 180px;">MiniCPM5-2B</span>
+      <span class="model-tag" style="--x: 0px; --y: 95px; --w: 240px;">mimo-v2.5-pro</span>
+      <span class="model-tag" style="--x: 379px; --y: 282px; --w: 182px;">Step-3.7</span>
+      <span class="model-tag" style="--x: 733px; --y: 164px; --w: 93px;">…</span>
+      <span class="model-tag" style="--x: 247px; --y: 6px; --w: 93px;">…</span>
+      <span class="model-tag" style="--x: 799px; --y: 226px; --w: 165px;">Spark-X2</span>
+      <span class="model-tag" style="--x: 799px; --y: 88px; --w: 140px;">QwQ-Plus</span>
+      <span class="model-tag" style="--x: 861px; --y: 156px; --w: 140px;">Hunyuan</span>
+      <span class="model-tag" style="--x: 52px; --y: 172px; --w: 140px;">Doubao</span>
+    </div>
+
+    <p class="model-note">切换模型只需改一个参数</p>
+    <a class="all-models" href="#contact">查看全部 100+ 模型与定价</a>
+  </section>
+
+  <section class="demo" id="demo" aria-labelledby="demo-title">
+    <h2 class="image-heading image-heading-demo" id="demo-title">
+      <img src="/assets/figma-v3-title-demo.svg" alt="">
+      <span class="sr-only">查看 Demo</span>
+    </h2>
+    <a
+      class="demo-media"
+      href="https://www.bilibili.com/video/BV1rK411f72c/"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="在哔哩哔哩观看可信执行环境视频"
+    >
+      <img src="/assets/figma-v3-demo.jpg" alt="ZeroClave 产品 Demo 封面">
+      <span class="demo-play" aria-hidden="true"></span>
+    </a>
+  </section>
+
+  <footer class="site-footer" id="contact">
+    <img class="footer-art" src="/assets/figma-v3-footer.png" alt="">
+    <div class="footer-cta">
+      <h2 class="image-heading image-heading-ready">
+        <img src="/assets/figma-v3-title-ready.svg" alt="">
+        <span class="sr-only">准备好了吗？</span>
+      </h2>
+      <p>
+        <span class="footer-copy-desktop">5 分钟接入，密码学可验证的隐私保护，和你现有的 OpenAI 调用一样简单。</span>
+        <span class="footer-copy-mobile">5 分钟接入<br>密码学可验证的隐私保护<br>和你现有的 OpenAI 调用一样简单</span>
+      </p>
+      <a class="footer-button" href="mailto:support@zeroclave.com">极速接入</a>
+    </div>
+
+    <div class="footer-links shell">
+      <a class="footer-brand" href="#top" aria-label="ZeroClave 首页"></a>
+      <nav aria-label="页脚导航">
+        <a href="#about">关于我们</a>
+        <a href="#features">核心功能</a>
+        <a href="#solutions">解决方案</a>
+        <a href="mailto:support@zeroclave.com">联系我们</a>
+        <a href="#demo">查看demo</a>
+        <a href="#contact">快速接入</a>
+      </nav>
+    </div>
+    <p class="copyright">© 2026 ZeroClave · 隐私政策 · 服务条款 · support@zeroclave.com</p>
+  </footer>
+
+  <dialog class="solution-dialog" id="solution-dialog">
+    <button class="dialog-close" type="button" aria-label="关闭">×</button>
+    <h2 data-dialog-title></h2>
+    <div class="dialog-rule"></div>
+    <p data-dialog-copy></p>
+    <strong data-dialog-tags></strong>
+  </dialog>
+</main>
