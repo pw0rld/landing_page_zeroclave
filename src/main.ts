@@ -16,6 +16,27 @@ document.querySelectorAll<HTMLAnchorElement>('[data-core-tab]').forEach((tab) =>
   });
 });
 
+const demoMedia = document.querySelector<HTMLElement>('.demo-media');
+const demoTrigger = demoMedia?.querySelector<HTMLButtonElement>('[data-demo-play]');
+
+demoTrigger?.addEventListener('click', () => {
+  const videoSrc = demoTrigger.dataset.videoSrc;
+  if (!demoMedia || !videoSrc) {
+    return;
+  }
+
+  const player = document.createElement('iframe');
+  player.className = 'demo-player';
+  player.src = videoSrc;
+  player.title = 'ZeroClave 产品 Demo';
+  player.allow = 'autoplay; fullscreen; picture-in-picture';
+  player.allowFullscreen = true;
+  player.referrerPolicy = 'strict-origin-when-cross-origin';
+
+  demoMedia.classList.add('is-playing');
+  demoTrigger.replaceWith(player);
+});
+
 type SolutionDetail = {
   title: string;
   copy: string;
