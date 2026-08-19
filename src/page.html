@@ -64,47 +64,47 @@
       </h2>
     </div>
 
-    <nav class="core-tabs" aria-label="核心功能导航">
-      <a class="core-tab active" data-core-tab href="#trusted-compute">硬件级可信处理</a>
-      <a class="core-tab" data-core-tab href="#privacy-firewall">Token 级隐私防火墙</a>
-      <a class="core-tab" data-core-tab href="#remote-attestation">远程证明可复验</a>
-      <a class="core-tab" data-core-tab href="#session-audit">会话保护与审计</a>
+    <nav class="core-tabs" role="tablist" aria-label="核心功能导航">
+      <button class="core-tab active" id="core-tab-trusted-compute" type="button" role="tab" aria-selected="true" aria-controls="trusted-compute" data-core-tab>硬件级可信处理</button>
+      <button class="core-tab" id="core-tab-privacy-firewall" type="button" role="tab" aria-selected="false" aria-controls="privacy-firewall" tabindex="-1" data-core-tab>Token 级隐私防火墙</button>
+      <button class="core-tab" id="core-tab-remote-attestation" type="button" role="tab" aria-selected="false" aria-controls="remote-attestation" tabindex="-1" data-core-tab>远程证明可复验</button>
+      <button class="core-tab" id="core-tab-session-audit" type="button" role="tab" aria-selected="false" aria-controls="session-audit" tabindex="-1" data-core-tab>会话保护与审计</button>
     </nav>
 
-    <article class="core-row core-row-one" id="trusted-compute">
+    <article class="core-row core-row-one" id="trusted-compute" role="tabpanel" aria-labelledby="core-tab-trusted-compute" tabindex="0" data-core-panel>
       <div class="core-media">
         <img src="/assets/figma-v3-core-hardware.png" alt="硬件级可信处理">
       </div>
       <div class="core-copy">
-        <img class="core-icon" src="/assets/figma-icon-hardware.png" alt="">
+        <img class="core-icon" src="/assets/figma-icon-hardware.svg" alt="">
         <h3>硬件级可信处理</h3>
         <p>ZeroClave 的核心运行在可信执行环境内，用户的提示词、模态数据和历史记忆仅在可信执行环境中解密处理，任何权限拥有者均无法窥探明文数据。</p>
       </div>
     </article>
 
-    <article class="core-row core-row-two" id="privacy-firewall">
+    <article class="core-row core-row-two" id="privacy-firewall" role="tabpanel" aria-labelledby="core-tab-privacy-firewall" tabindex="0" data-core-panel hidden>
       <div class="core-media">
         <img src="/assets/figma-v3-core-privacy.png" alt="Token 级隐私防火墙">
       </div>
       <div class="core-copy">
-        <img class="core-icon" src="/assets/figma-icon-privacy.png" alt="">
+        <img class="core-icon" src="/assets/figma-icon-privacy.svg" alt="">
         <h3>Token 级隐私防火墙</h3>
         <p>依据重要性及隐私性评估结果，采用差分隐私、格式保留加密及安全过滤技术，实现数据脱敏和语义完整度保留。</p>
       </div>
     </article>
 
-    <article class="core-row core-row-three" id="remote-attestation">
+    <article class="core-row core-row-three" id="remote-attestation" role="tabpanel" aria-labelledby="core-tab-remote-attestation" tabindex="0" data-core-panel hidden>
       <div class="core-media">
         <img src="/assets/figma-v3-core-proof.png" alt="远程证明可复验">
       </div>
       <div class="core-copy">
-        <img class="core-icon" src="/assets/figma-icon-proof.png" alt="">
+        <img class="core-icon" src="/assets/figma-icon-proof.svg" alt="">
         <h3>远程证明可复验</h3>
         <p>遵循 IETF RATS 协议，客户可独立验证运行环境和工作负载，确保使用时运行环境安全、代码未被篡改、模型未被降智。</p>
       </div>
     </article>
 
-    <article class="core-row core-row-four" id="session-audit">
+    <article class="core-row core-row-four" id="session-audit" role="tabpanel" aria-labelledby="core-tab-session-audit" tabindex="0" data-core-panel hidden>
       <div class="core-media">
         <img src="/assets/figma-v3-core-session.png" alt="会话保护与审计">
       </div>

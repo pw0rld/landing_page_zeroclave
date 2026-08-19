@@ -9,12 +9,70 @@ if (!app) {
 
 app.innerHTML = pageHtml;
 
-document.querySelectorAll<HTMLAnchorElement>('[data-core-tab]').forEach((tab) => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('[data-core-tab]').forEach((item) => item.classList.remove('active'));
-    tab.classList.add('active');
+const coreTabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-core-tab]'));
+const corePanels = Array.from(document.querySelectorAll<HTMLElement>('[data-core-panel]'));
+
+const activateCoreTab = (activeTab: HTMLButtonElement, moveFocus = false): void => {
+  const activePanelId = activeTab.getAttribute('aria-controls');
+  if (!activePanelId) {
+    return;
+  }
+
+  coreTabs.forEach((tab) => {
+    const isActive = tab === activeTab;
+    tab.classList.toggle('active', isActive);
+    tab.setAttribute('aria-selected', String(isActive));
+    tab.tabIndex = isActive ? 0 : -1;
+  });
+
+  corePanels.forEach((panel) => {
+    panel.hidden = panel.id !== activePanelId;
+  });
+
+  const tabList = activeTab.parentElement;
+  if (tabList && tabList.scrollWidth > tabList.clientWidth) {
+    tabList.scrollTo({
+      left: activeTab.offsetLeft - (tabList.clientWidth - activeTab.offsetWidth) / 2,
+    });
+  }
+
+  if (moveFocus) {
+    activeTab.focus();
+  }
+};
+
+coreTabs.forEach((tab, index) => {
+  tab.addEventListener('click', () => activateCoreTab(tab));
+  tab.addEventListener('keydown', (event) => {
+    let nextIndex: number | null = null;
+
+    if (event.key === 'ArrowRight') {
+      nextIndex = (index + 1) % coreTabs.length;
+    } else if (event.key === 'ArrowLeft') {
+      nextIndex = (index - 1 + coreTabs.length) % coreTabs.length;
+    } else if (event.key === 'Home') {
+      nextIndex = 0;
+    } else if (event.key === 'End') {
+      nextIndex = coreTabs.length - 1;
+    }
+
+    if (nextIndex === null) {
+      return;
+    }
+
+    event.preventDefault();
+    activateCoreTab(coreTabs[nextIndex], true);
   });
 });
+
+const hashPanelId = window.location.hash.slice(1);
+const initialCoreTab = coreTabs.find((tab) => tab.getAttribute('aria-controls') === hashPanelId)
+  ?? coreTabs.find((tab) => tab.classList.contains('active'))
+  ?? coreTabs[0];
+
+if (initialCoreTab) {
+  activateCoreTab(initialCoreTab);
+}
 
 const demoMedia = document.querySelector<HTMLElement>('.demo-media');
 const demoTrigger = demoMedia?.querySelector<HTMLButtonElement>('[data-demo-play]');

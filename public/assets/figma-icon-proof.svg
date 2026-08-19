@@ -1,0 +1,12 @@
+<svg width="70" height="70" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="url(#proof-gradient)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2.59 17.41C2.21 17.79 2 18.3 2 18.83V21C2 21.55 2.45 22 3 22H6.17C6.7 22 7.21 21.79 7.59 21.41L16.29 12.71C18.72 13.73 21.52 12.59 22.54 10.16C23.56 7.73 22.42 4.93 19.99 3.91C17.56 2.89 14.76 4.03 13.74 6.46C13.22 7.69 13.22 9.07 13.71 10.29L2.59 17.41Z"/>
+    <circle cx="17.5" cy="7.5" r="0.7" fill="#1FD8E9" stroke="none"/>
+  </g>
+  <defs>
+    <linearGradient id="proof-gradient" x1="12" y1="2" x2="12" y2="22" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1FD8E9"/>
+      <stop offset="1" stop-color="#1DB86C"/>
+    </linearGradient>
+  </defs>
+</svg>
