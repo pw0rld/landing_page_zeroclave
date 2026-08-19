@@ -12,6 +12,15 @@ app.innerHTML = pageHtml;
 const coreTabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-core-tab]'));
 const corePanels = Array.from(document.querySelectorAll<HTMLElement>('[data-core-panel]'));
 
+if (window.matchMedia('(max-width: 560px)').matches) {
+  corePanels.forEach((panel) => {
+    const image = panel.querySelector<HTMLImageElement>('.core-media img');
+    if (image) {
+      image.loading = 'eager';
+    }
+  });
+}
+
 const activateCoreTab = (activeTab: HTMLButtonElement, moveFocus = false): void => {
   const activePanelId = activeTab.getAttribute('aria-controls');
   if (!activePanelId) {
