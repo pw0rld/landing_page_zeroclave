@@ -1,6 +1,5 @@
 import pageHtml from './page.html?raw';
 import './styles.css';
-import { initializeTheme } from './theme';
 
 const app = document.querySelector<HTMLDivElement>('#app');
 
@@ -9,7 +8,6 @@ if (!app) {
 }
 
 app.innerHTML = pageHtml;
-initializeTheme();
 
 document.querySelectorAll<HTMLAnchorElement>('[data-core-tab]').forEach((tab) => {
   tab.addEventListener('click', () => {
