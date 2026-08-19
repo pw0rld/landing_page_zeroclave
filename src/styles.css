@@ -653,9 +653,7 @@ img {
   height: 37px;
   border: 1px solid transparent;
   border-radius: 18px;
-  background:
-    linear-gradient(#14171e, #14171e) padding-box,
-    var(--gradient) border-box;
+  background: linear-gradient(90deg, #5ed4de 0%, #5cb884 100%);
   color: #ffffff;
   font-size: 22px;
   font-weight: 600;
