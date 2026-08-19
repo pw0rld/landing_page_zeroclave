@@ -1,7 +1,8 @@
 <main class="page" id="top">
   <section class="hero" aria-labelledby="hero-title">
     <picture class="hero-picture" aria-hidden="true">
-      <img class="hero-art" src="/assets/figma-v3-hero.png" alt="">
+      <source media="(max-width: 560px)" srcset="/assets/figma-v3-hero-mobile.webp" type="image/webp">
+      <img class="hero-art" src="/assets/figma-v3-hero.png" alt="" decoding="async" fetchpriority="high">
     </picture>
 
     <header class="site-header shell">
@@ -30,7 +31,14 @@
     </div>
 
     <div class="capability-band" aria-label="产品能力概览">
-      <img class="capability-band__texture" src="/assets/figma-v3-keyword-texture.png" alt="">
+      <img
+        class="capability-band__texture"
+        src="/assets/figma-v3-keyword-texture.png"
+        srcset="/assets/figma-v3-keyword-texture-mobile.webp 960w, /assets/figma-v3-keyword-texture.png 2000w"
+        sizes="100vw"
+        alt=""
+        decoding="async"
+      >
       <div class="capability-band__inner">
         <div class="capability-item">
           <strong>隐私合规</strong>
@@ -73,7 +81,14 @@
 
     <article class="core-row core-row-one" id="trusted-compute" role="tabpanel" aria-labelledby="core-tab-trusted-compute" tabindex="0" data-core-panel>
       <div class="core-media">
-        <img src="/assets/figma-v3-core-hardware.png" alt="硬件级可信处理">
+        <img
+          src="/assets/figma-v3-core-hardware.png"
+          srcset="/assets/figma-v3-core-hardware-mobile.webp 900w, /assets/figma-v3-core-hardware.png 1535w"
+          sizes="(max-width: 560px) 290px, (max-width: 1100px) 45vw, 680px"
+          alt="硬件级可信处理"
+          loading="lazy"
+          decoding="async"
+        >
       </div>
       <div class="core-copy">
         <img class="core-icon" src="/assets/figma-icon-hardware.svg" alt="">
@@ -84,7 +99,14 @@
 
     <article class="core-row core-row-two" id="privacy-firewall" role="tabpanel" aria-labelledby="core-tab-privacy-firewall" tabindex="0" data-core-panel hidden>
       <div class="core-media">
-        <img src="/assets/figma-v3-core-privacy.png" alt="Token 级隐私防火墙">
+        <img
+          src="/assets/figma-v3-core-privacy.png"
+          srcset="/assets/figma-v3-core-privacy-mobile.webp 900w, /assets/figma-v3-core-privacy.png 1536w"
+          sizes="(max-width: 560px) 290px, (max-width: 1100px) 45vw, 680px"
+          alt="Token 级隐私防火墙"
+          loading="lazy"
+          decoding="async"
+        >
       </div>
       <div class="core-copy">
         <img class="core-icon" src="/assets/figma-icon-privacy.svg" alt="">
@@ -95,7 +117,14 @@
 
     <article class="core-row core-row-three" id="remote-attestation" role="tabpanel" aria-labelledby="core-tab-remote-attestation" tabindex="0" data-core-panel hidden>
       <div class="core-media">
-        <img src="/assets/figma-v3-core-proof.png" alt="远程证明可复验">
+        <img
+          src="/assets/figma-v3-core-proof.png"
+          srcset="/assets/figma-v3-core-proof-mobile.webp 900w, /assets/figma-v3-core-proof.png 1536w"
+          sizes="(max-width: 560px) 290px, (max-width: 1100px) 45vw, 680px"
+          alt="远程证明可复验"
+          loading="lazy"
+          decoding="async"
+        >
       </div>
       <div class="core-copy">
         <img class="core-icon" src="/assets/figma-icon-proof.svg" alt="">
@@ -106,7 +135,14 @@
 
     <article class="core-row core-row-four" id="session-audit" role="tabpanel" aria-labelledby="core-tab-session-audit" tabindex="0" data-core-panel hidden>
       <div class="core-media">
-        <img src="/assets/figma-v3-core-session.png" alt="会话保护与审计">
+        <img
+          src="/assets/figma-v3-core-session.png"
+          srcset="/assets/figma-v3-core-session-mobile.webp 900w, /assets/figma-v3-core-session.png 1461w"
+          sizes="(max-width: 560px) 290px, (max-width: 1100px) 45vw, 680px"
+          alt="会话保护与审计"
+          loading="lazy"
+          decoding="async"
+        >
       </div>
       <div class="core-copy">
         <img class="core-icon" src="/assets/figma-icon-session.svg" alt="">
@@ -127,7 +163,14 @@
 
     <div class="solution-grid">
       <article class="solution-card">
-        <img src="/assets/figma-v3-solution-law.png" alt="法律场景">
+        <img
+          src="/assets/figma-v3-solution-law.png"
+          srcset="/assets/figma-v3-solution-law-mobile.webp 1200w, /assets/figma-v3-solution-law.png 2592w"
+          sizes="(max-width: 560px) calc(100vw - 32px), (max-width: 1100px) 45vw, 460px"
+          alt="法律场景"
+          loading="lazy"
+          decoding="async"
+        >
         <div class="solution-overlay"></div>
         <div class="solution-copy">
           <h3>法律场景</h3>
@@ -137,7 +180,14 @@
       </article>
 
       <article class="solution-card">
-        <img src="/assets/figma-v3-solution-government.png" alt="政务场景">
+        <img
+          src="/assets/figma-v3-solution-government.png"
+          srcset="/assets/figma-v3-solution-government-mobile.webp 602w"
+          sizes="(max-width: 560px) calc(100vw - 32px), (max-width: 1100px) 45vw, 460px"
+          alt="政务场景"
+          loading="lazy"
+          decoding="async"
+        >
         <div class="solution-overlay"></div>
         <div class="solution-copy">
           <h3>政务场景</h3>
@@ -147,7 +197,14 @@
       </article>
 
       <article class="solution-card">
-        <img src="/assets/figma-v3-solution-medical.png" alt="医疗场景">
+        <img
+          src="/assets/figma-v3-solution-medical.png"
+          srcset="/assets/figma-v3-solution-medical-mobile.webp 600w"
+          sizes="(max-width: 560px) calc(100vw - 32px), (max-width: 1100px) 45vw, 460px"
+          alt="医疗场景"
+          loading="lazy"
+          decoding="async"
+        >
         <div class="solution-overlay"></div>
         <div class="solution-copy">
           <h3>医疗场景</h3>
@@ -157,7 +214,14 @@
       </article>
 
       <article class="solution-card">
-        <img src="/assets/figma-v3-solution-finance.png" alt="金融场景">
+        <img
+          src="/assets/figma-v3-solution-finance.png"
+          srcset="/assets/figma-v3-solution-finance-mobile.webp 1200w, /assets/figma-v3-solution-finance.png 1600w"
+          sizes="(max-width: 560px) calc(100vw - 32px), (max-width: 1100px) 45vw, 460px"
+          alt="金融场景"
+          loading="lazy"
+          decoding="async"
+        >
         <div class="solution-overlay"></div>
         <div class="solution-copy">
           <h3>金融场景</h3>
@@ -217,7 +281,14 @@
         data-video-src="https://player.bilibili.com/player.html?isOutside=true&amp;bvid=BV13r8j65Ewb&amp;p=1&amp;high_quality=1&amp;danmaku=0&amp;autoplay=1"
         aria-label="播放 ZeroClave - 你与大模型之间的隐私安全网关"
       >
-        <img src="/assets/figma-v3-demo.jpg" alt="ZeroClave - 你与大模型之间的隐私安全网关视频封面">
+        <img
+          src="/assets/figma-v3-demo.jpg"
+          srcset="/assets/figma-v3-demo-mobile.webp 960w, /assets/figma-v3-demo.jpg 1920w"
+          sizes="(max-width: 560px) calc(100vw - 62px), (max-width: 1100px) 75vw, 1040px"
+          alt="ZeroClave - 你与大模型之间的隐私安全网关视频封面"
+          loading="lazy"
+          decoding="async"
+        >
         <span class="demo-play" aria-hidden="true"></span>
       </button>
     </div>
@@ -231,7 +302,15 @@
   </section>
 
   <footer class="site-footer" id="contact">
-    <img class="footer-art" src="/assets/figma-v3-footer.png" alt="">
+    <img
+      class="footer-art"
+      src="/assets/figma-v3-footer.png"
+      srcset="/assets/figma-v3-footer-mobile.webp 1280w, /assets/figma-v3-footer.png 3840w"
+      sizes="100vw"
+      alt=""
+      loading="lazy"
+      decoding="async"
+    >
     <div class="footer-cta">
       <h2 class="image-heading image-heading-ready">
         <img src="/assets/figma-v3-title-ready.svg" alt="">
